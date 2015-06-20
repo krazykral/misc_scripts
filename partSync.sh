@@ -1,11 +1,8 @@
 #! /bin/sh
 # Author: krazyral
 # Title: partSync.sh
-
-# requires: rsync
- 
-#
-# This script will sync $sDir to partition $mUUID
+# Requires: rsync
+# Purpose: sync $sDir to partition $mUUID
 
 # Originally used to sync /boot to an equal size partition on another disk
 # Run it as a cron job or whenever you like
