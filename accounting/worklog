@@ -1,0 +1,63 @@
+#! /bin/bash
+
+LOGDIR=~/.worklog
+DAY="$(date +'%F').log"
+LOG="$LOGDIR/$DAY"
+if [ "x$EDITOR" == "x" ]; then
+	EDITOR=$(which vim)
+fi
+
+usage(){
+cat <<-EOFusage
+
+Usage:
+When "Log task: " is present you can enter a description about your task or enter commands.
+    Commands:
+             dago_	  # Modfiy the date from 1-9 days ago
+             exit_        # Exits the program
+             edit_        # appends current datetime and opens the
+                            \$LOG: $LOG in \$EDITOR: $EDITOR 
+             help_	  # Prints this message 
+EOFusage
+}
+
+
+dago(){
+local DAGO
+while [[ $DAGO != [1-9] ]]; do
+	echo -n 'How many days ago? [1-9]: '
+	read DAGO
+done
+
+local DAY="$(date --date "days ago $DAGO" +'%F')"
+local LOG="$LOGDIR/$DAY"
+
+echo "$(date --date "days ago $DAGO" +'%F-%T') - $USER -- " >> $LOG; $EDITOR $LOG;
+}
+
+if [[ ! -L "$LOGDIR" ]]; then 
+	[[ ! -d "$LOGDIR" ]] && mkdir "$LOGDIR"
+fi
+
+echo "Today's work:"
+[[ -f "$LOG" ]] && cat $LOG
+
+while true; do
+	echo -n "Log task: "
+	read entry
+	case "$entry" in
+		dago_) dago;;
+		exit_) break;;
+		edit_) echo "$(date +'%F-%T') - $USER -- " >> $LOG; $EDITOR $LOG;;
+		help_) usage;;
+		*) echo -e "$(date +'%F-%T') - $USER -- $entry" >> $LOG;;
+	esac
+
+	echo -n "Do you have a(nother) task to log [Y/n]?"
+	read another
+	case "$another" in
+		y|Y) continue;;
+		n|N) break;;
+		*) continue;;
+	esac
+done
