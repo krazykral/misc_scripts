@@ -1,22 +1,9 @@
 #! /bin/bash
-# Purpose: Run GETSSL unprivileged copy files to desired location
-# requires: webserver: python3
+# requires: webserver: python
 # WEBSERVER can be any webserver, default: python3 built-in
-#
-# Configure GETSSL array to your needs
-# Configure APPLICATION array to your needs
-# Configure FIREWALL array to your needs
-# Configure WEBSERVER[port] to your needs 
-
-# Some structures are bound which should be unbound, principally
-#   APPLICATION[name] should be split from its service control
-# It's sloppy and wanting for logging and failure notices, but it's tested and works
-
 
 # NOTES
 #   GETSSL[email_domain] must be tuned for specific domain/host
-
-#  Needs tuning
 # NOTES
 
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
@@ -242,9 +229,11 @@ backup_pki "${APPLICATION[key]}"
 
 getssl_exec
 
+stop_webserver
+
 update_pki cert
 update_pki key
 
 systemctl restart ${APPLICATION[name]}
 
-stop_webserver
+
